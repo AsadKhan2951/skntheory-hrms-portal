@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, Home, Clock, ClipboardList, FolderKanban, FileText, MessageSquare, Calendar, DollarSign, Bell, Settings, Shield } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Home, Clock, ClipboardList, FolderKanban, FileText, DollarSign, Bell, Settings, Shield } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -119,9 +119,6 @@ function DashboardLayoutContent({
     { icon: ClipboardList, label: "Leave Management", path: "/leave" },
     { icon: FolderKanban, label: "Projects", path: "/projects" },
     { icon: FileText, label: "Forms", path: "/forms" },
-    { icon: MessageSquare, label: "Chat", path: "/chat" },
-    { icon: Calendar, label: "Calendar", path: "/calendar" },
-    { icon: Users, label: "Schedule Meeting", path: "/schedule-meeting" },
     { icon: DollarSign, label: "Payslips", path: "/payslips" },
     { icon: Bell, label: "Announcements", path: "/announcements" },
     { icon: Settings, label: "Account", path: "/account" },

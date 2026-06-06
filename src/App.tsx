@@ -6,7 +6,6 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import Chat from "./pages/Chat";
 import LeaveManagement from "./pages/LeaveManagement";
 import Payslips from "./pages/Payslips";
 import Announcements from "./pages/Announcements";
@@ -24,8 +23,6 @@ import PayslipManagement from "./pages/admin/PayslipManagement";
 import ProjectAssignment from "./pages/admin/ProjectAssignment";
 import AdvancedReports from "./pages/admin/AdvancedReports";
 import AnnouncementsManagement from "./pages/admin/AnnouncementsManagement";
-import Calendar from "./pages/Calendar";
-import ScheduleMeeting from "./pages/ScheduleMeeting";
 import { useAuth } from "./_core/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 
@@ -54,9 +51,6 @@ function Router() {
       <Route path="/dashboard">
         {() => <ProtectedRoute component={Dashboard} />}
       </Route>
-      <Route path="/chat">
-        {() => <ProtectedRoute component={Chat} />}
-      </Route>
       <Route path="/leave">
         {() => <ProtectedRoute component={LeaveManagement} />}
       </Route>
@@ -82,8 +76,6 @@ function Router() {
         {() => <ProtectedRoute component={Reports} />}
       </Route>
       <Route path="/notifications" component={() => <ProtectedRoute component={Notifications} />} />
-          <Route path="/calendar" component={() => <ProtectedRoute component={Calendar} />} />
-          <Route path="/schedule-meeting" component={() => <ProtectedRoute component={ScheduleMeeting} />} />
       <Route path="/admin">
         {() => <ProtectedRoute component={AdminDashboard} />}
       </Route>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,10 @@ import {
   Clock, 
   AlertTriangle, 
   Calendar,
-  MessageSquare,
   ArrowRight
 } from "lucide-react";
 import { format } from "date-fns";
 import { trpc } from "@/lib/trpc";
-import { useAuth } from "@/_core/hooks/useAuth";
 
 interface NotificationSidebarProps {
   isOpen: boolean;
@@ -23,29 +21,10 @@ interface NotificationSidebarProps {
 }
 
 export function NotificationSidebar({ isOpen, onClose }: NotificationSidebarProps) {
-  const { user } = useAuth();
-  const currentUserId = user?.id ? String(user.id) : null;
   const { data: notifications = [] } = trpc.notifications.getAll.useQuery(undefined, {
     refetchInterval: isOpen ? 10000 : false,
     enabled: isOpen,
   });
-  const { data: chatMessages } = trpc.chat.getMessages.useQuery(
-    { limit: 50 },
-    { refetchInterval: 10000, enabled: isOpen }
-  );
-
-  const unreadChatMessages = useMemo(() => {
-    if (!currentUserId || !chatMessages) return [];
-    return chatMessages.filter((msg: any) => {
-      if (msg.isRead) return false;
-      if (String(msg.senderId) === currentUserId) return false;
-      const recipientId = msg.recipientId ? String(msg.recipientId) : null;
-      return !recipientId || recipientId === currentUserId;
-    });
-  }, [chatMessages, currentUserId]);
-
-  const unreadChatCount = unreadChatMessages.length;
-  const latestChat = unreadChatMessages[unreadChatMessages.length - 1];
   // Close sidebar on Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -71,36 +50,8 @@ export function NotificationSidebar({ isOpen, onClose }: NotificationSidebarProp
     };
   }, [isOpen]);
 
-  const chatNotification = unreadChatCount
-    ? {
-        id: "chat",
-        type: "chat",
-        title: "New Chat Messages",
-        message: latestChat?.message
-          ? latestChat.message
-          : `You have ${unreadChatCount} unread chat message${unreadChatCount > 1 ? "s" : ""}.`,
-        priority: "high",
-        isRead: false,
-        createdAt: latestChat?.createdAt ? new Date(latestChat.createdAt) : new Date(),
-        link: "/chat",
-      }
-    : null;
-
-  const mergedNotifications = useMemo(() => {
-    const combined = [
-      ...(chatNotification ? [chatNotification] : []),
-      ...notifications,
-    ];
-    return combined.sort((a: any, b: any) => {
-      const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      return bTime - aTime;
-    });
-  }, [chatNotification, notifications]);
-
-  const recentNotifications = mergedNotifications.slice(0, 5);
-  const unreadCount =
-    notifications.filter(n => !n.isRead).length + unreadChatCount;
+  const recentNotifications = notifications.slice(0, 5);
+  const unreadCount = notifications.filter(n => !n.isRead).length;
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -112,8 +63,6 @@ export function NotificationSidebar({ isOpen, onClose }: NotificationSidebarProp
         return <Clock className="h-4 w-4 text-red-500" />;
       case "announcement":
         return <Bell className="h-4 w-4 text-purple-500" />;
-      case "chat":
-        return <MessageSquare className="h-4 w-4 text-green-500" />;
       default:
         return <Bell className="h-4 w-4 text-gray-500" />;
     }

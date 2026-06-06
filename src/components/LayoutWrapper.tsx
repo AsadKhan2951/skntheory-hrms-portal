@@ -1,15 +1,13 @@
-import { useMemo, useState, ReactNode } from "react";
+import { useState, ReactNode } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc";
 import { useRealtime } from "@/_core/hooks/useRealtime";
 import {
   Clock,
   FileText,
   BarChart3,
-  MessageSquare,
   LogOut,
   Sun,
   Moon,
@@ -21,15 +19,12 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  Calendar,
   Menu,
   X,
   FolderKanban,
-  Users,
   Shield,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
-import { GlobalChatWidget } from "@/components/GlobalChatWidget";
 import { useIsMobile } from "@/hooks/useMobile";
 import { toast } from "sonner";
 
@@ -45,23 +40,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useIsMobile();
-  const currentUserId = user?.id ? String(user.id) : null;
   useRealtime();
-
-  const { data: chatMessages } = trpc.chat.getMessages.useQuery(
-    { limit: 100 },
-    { refetchInterval: 10000 }
-  );
-
-  const unreadChatCount = useMemo(() => {
-    if (!currentUserId || !chatMessages) return 0;
-    return chatMessages.filter((msg: any) => {
-      if (msg.isRead) return false;
-      if (String(msg.senderId) === currentUserId) return false;
-      const recipientId = msg.recipientId ? String(msg.recipientId) : null;
-      return !recipientId || recipientId === currentUserId;
-    }).length;
-  }, [chatMessages, currentUserId]);
 
   const handleLogout = async () => {
     try {
@@ -79,9 +58,6 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
     { icon: FolderKanban, label: "Projects", path: "/projects" },
     { icon: BarChart3, label: "Reports", path: "/reports" },
     { icon: FileText, label: "Forms", path: "/forms" },
-    { icon: MessageSquare, label: "Chat", path: "/chat" },
-    { icon: Calendar, label: "Calendar", path: "/calendar" },
-    { icon: Users, label: "Schedule Meeting", path: "/schedule-meeting" },
     { icon: DollarSign, label: "Payslips", path: "/payslips" },
     { icon: Bell, label: "Announcements", path: "/announcements" },
     { icon: Settings, label: "Account", path: "/account" },
@@ -166,15 +142,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
                     {!sidebarCollapsed && (
                       <>
                         <span className="ml-3 flex-1 text-left">{item.label}</span>
-                        {item.path === "/chat" && unreadChatCount > 0 && (
-                          <span className="min-w-[20px] px-2 py-0.5 text-xs rounded-full bg-red-500 text-white text-center">
-                            {unreadChatCount}
-                          </span>
-                        )}
                       </>
-                    )}
-                    {sidebarCollapsed && item.path === "/chat" && unreadChatCount > 0 && (
-                      <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
                     )}
                   </Button>
                 </Link>
@@ -203,9 +171,6 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
           </Button>
         </div>
       </aside>
-
-      {/* Global Chat Widget */}
-      <GlobalChatWidget />
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto w-full">

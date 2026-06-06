@@ -1,4 +1,4 @@
-import { useMemo, useState, ReactNode } from "react";
+import { useState, ReactNode } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,6 @@ import {
   DollarSign, 
   FolderKanban,
   BarChart3,
-  Calendar,
   Clock,
   Menu,
   X,
@@ -20,17 +19,14 @@ import {
   Home,
   Search,
   Bell,
-  MessageCircle,
   Activity,
   Settings,
-  Mail,
   FileText
 } from "lucide-react";
 import { Link, useLocation, Redirect } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useRealtime } from "@/_core/hooks/useRealtime";
 import { toast } from "sonner";
-import { GlobalChatWidget } from "./GlobalChatWidget";
 import { NotesWidget } from "./NotesWidget";
 
 interface AdminLayoutProps {
@@ -45,25 +41,9 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showChat, setShowChat] = useState(false);
-  const currentUserId = user?.id ? String(user.id) : null;
   useRealtime();
 
-  const { data: chatMessages } = trpc.chat.getMessages.useQuery(
-    { limit: 100 },
-    { refetchInterval: 10000 }
-  );
   const { data: notifications = [] } = trpc.notifications.getAll.useQuery();
-
-  const unreadChatCount = useMemo(() => {
-    if (!currentUserId || !chatMessages) return 0;
-    return chatMessages.filter((msg: any) => {
-      if (msg.isRead) return false;
-      if (String(msg.senderId) === currentUserId) return false;
-      const recipientId = msg.recipientId ? String(msg.recipientId) : null;
-      return !recipientId || recipientId === currentUserId;
-    }).length;
-  }, [chatMessages, currentUserId]);
 
   const handleLogout = async () => {
     try {
@@ -86,29 +66,16 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     { icon: MessageSquareText, label: "Forms", path: "/admin/forms" },
     { icon: DollarSign, label: "Payslips", path: "/admin/payslips" },
     { icon: FolderKanban, label: "Projects", path: "/admin/projects" },
-    { icon: Calendar, label: "Calendar", path: "/calendar" },
-    { icon: Users, label: "Schedule Meeting", path: "/schedule-meeting" },
     { icon: Bell, label: "Announcements", path: "/admin/announcements" },
     { icon: BarChart3, label: "Reports", path: "/admin/reports" },
     { icon: BarChart3, label: "Employee Reports", path: "/reports" },
     { icon: Clock, label: "Clock-Out Reports", path: "/admin/reports" },
-    { icon: Mail, label: "Email", path: "/chat" },
     { icon: FileText, label: "Notes", path: "/forms" },
   ];
 
   const isActive = (path: string) => location === path;
 
   const recentNotifications = [
-    ...(unreadChatCount > 0
-      ? [
-          {
-            id: "chat",
-            type: "chat",
-            message: `You have ${unreadChatCount} unread chat message${unreadChatCount > 1 ? "s" : ""}.`,
-            time: "Just now",
-          },
-        ]
-      : []),
     ...notifications.slice(0, 5).map((n: any) => ({
       id: n.id,
       type: n.type,
@@ -206,16 +173,6 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 />
               </div>
 
-              {/* Chat Widget Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9"
-                onClick={() => setShowChat(!showChat)}
-              >
-                <MessageCircle className="h-4 w-4" />
-              </Button>
-
               {/* Notification Center */}
               <div className="relative">
                 <Button
@@ -225,7 +182,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                   onClick={() => setShowNotifications(!showNotifications)}
                 >
                   <Bell className="h-4 w-4" />
-                  {(unreadChatCount > 0 || recentNotifications.length > 0) && (
+                  {recentNotifications.length > 0 && (
                     <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
                   )}
                 </Button>
@@ -263,13 +220,6 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
           {children}
         </div>
       </main>
-
-      {/* Global Chat Widget */}
-      {showChat && (
-        <div className="fixed bottom-4 right-4 z-50">
-          <GlobalChatWidget />
-        </div>
-      )}
 
       <NotesWidget />
     </div>

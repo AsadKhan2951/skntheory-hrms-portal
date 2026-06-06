@@ -15,7 +15,6 @@ import {
   Calendar, 
   TrendingUp, 
   FileText, 
-  MessageSquare, 
   LogOut,
   Menu,
   X,
@@ -24,7 +23,6 @@ import {
   Moon,
   Home,
   ClipboardList,
-  Users,
   Settings,
   Bell,
   DollarSign,
@@ -46,72 +44,11 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { addHours, format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfDay, subDays } from "date-fns";
 import { toast } from "sonner";
 import { Link, useLocation } from "wouter";
-import { GlobalChatWidget } from "@/components/GlobalChatWidget";
 import { NotesWidget } from "@/components/NotesWidget";
 import { NotificationSidebar } from "@/components/NotificationSidebar";
-import { CalendarSidebar } from "@/components/CalendarSidebar";
-import { QuickMeetingSidebar } from "@/components/QuickMeetingSidebar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-// Today's Calendar Widget Component
-function TodayCalendarWidgetContent() {
-  const { data: meetings, isLoading } = trpc.meetings.getMyMeetings.useQuery();
-  
-  const todayMeetings = meetings?.filter((m: any) => {
-    const meetingDate = new Date(m.startTime);
-    return meetingDate.toDateString() === new Date().toDateString();
-  }) || [];
-
-  const { data: events } = trpc.calendar.getMyEvents.useQuery();
-  
-  const todayEvents = events?.filter(event => {
-    const eventDate = new Date(event.startTime);
-    return eventDate.toDateString() === new Date().toDateString();
-  }) || [];
-
-  if (isLoading) {
-    return <div className="flex items-center justify-center py-8"><Loader2 className="h-6 w-6 animate-spin" /></div>;
-  }
-
-  const allItems = [
-    ...todayMeetings.map((m: any) => ({ type: 'meeting' as const, title: m.title, time: new Date(m.startTime) })),
-    ...todayEvents.map((e: any) => ({ type: 'event' as const, title: e.title, time: new Date(e.startTime) }))
-  ].sort((a, b) => a.time.getTime() - b.time.getTime());
-
-  if (allItems.length === 0) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">
-        <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
-        <p>No events scheduled for today</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-3">
-      {allItems.slice(0, 3).map((item, idx) => (
-        <div key={idx} className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
-          <div className="flex-shrink-0 w-12 text-center">
-            <div className="text-sm font-semibold">{format(item.time, 'HH:mm')}</div>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              {item.type === 'meeting' ? <Users className="h-4 w-4 text-blue-500" /> : <Calendar className="h-4 w-4 text-green-500" />}
-              <span className="font-medium truncate">{item.title}</span>
-            </div>
-          </div>
-        </div>
-      ))}
-      {allItems.length > 3 && (
-        <div className="text-center text-sm text-muted-foreground">
-          +{allItems.length - 3} more events
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -127,11 +64,8 @@ export default function Dashboard() {
   const [breakDialogOpen, setBreakDialogOpen] = useState(false);
   const [breakReason, setBreakReason] = useState("");
   const [notificationSidebarOpen, setNotificationSidebarOpen] = useState(false);
-  const [calendarSidebarOpen, setCalendarSidebarOpen] = useState(false);
-  const [meetingSidebarOpen, setMeetingSidebarOpen] = useState(false);
   const [attendanceView, setAttendanceView] = useState<'graph' | 'list'>('graph');
   const [fabOpen, setFabOpen] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackSubject, setFeedbackSubject] = useState("");
@@ -157,7 +91,6 @@ export default function Dashboard() {
   const [overtimeProjectId, setOvertimeProjectId] = useState("");
   const [overtimeTaskId, setOvertimeTaskId] = useState("");
   const [overtimeDescription, setOvertimeDescription] = useState("");
-  const currentUserId = user?.id ? String(user.id) : null;
 
   const handleLogout = async () => {
     try {
@@ -189,20 +122,6 @@ export default function Dashboard() {
   const updateLocationMutation = trpc.timeTracking.updateLocation.useMutation();
   const locationRequestedForEntry = useRef<string | null>(null);
   const { data: breakLogs } = trpc.timeTracking.getBreakLogs.useQuery();
-  const { data: chatMessages } = trpc.chat.getMessages.useQuery(
-    { limit: 100 },
-    { refetchInterval: 10000 }
-  );
-
-  const unreadChatCount = useMemo(() => {
-    if (!currentUserId || !chatMessages) return 0;
-    return chatMessages.filter((msg: any) => {
-      if (msg.isRead) return false;
-      if (String(msg.senderId) === currentUserId) return false;
-      const recipientId = msg.recipientId ? String(msg.recipientId) : null;
-      return !recipientId || recipientId === currentUserId;
-    }).length;
-  }, [chatMessages, currentUserId]);
 
   // Get current month attendance
   const monthStart = startOfMonth(new Date());
@@ -489,9 +408,6 @@ export default function Dashboard() {
     { icon: ClipboardList, label: "Leave Management", path: "/leave" },
     { icon: FolderKanban, label: "Projects", path: "/projects" },
     { icon: FileText, label: "Forms", path: "/forms" },
-    { icon: MessageSquare, label: "Chat", path: "/chat" },
-    { icon: Calendar, label: "Calendar", path: "/calendar" },
-    { icon: Users, label: "Schedule Meeting", path: "/schedule-meeting" },
     { icon: DollarSign, label: "Payslips", path: "/payslips" },
     { icon: Bell, label: "Announcements", path: "/announcements" },
     { icon: Settings, label: "Account", path: "/account" },
@@ -574,15 +490,7 @@ export default function Dashboard() {
                     {!sidebarCollapsed && (
                       <>
                         <span className="ml-3 flex-1 text-left">{item.label}</span>
-                        {item.path === "/chat" && unreadChatCount > 0 && (
-                          <span className="min-w-[20px] px-2 py-0.5 text-xs rounded-full bg-red-500 text-white text-center">
-                            {unreadChatCount}
-                          </span>
-                        )}
                       </>
-                    )}
-                    {sidebarCollapsed && item.path === "/chat" && unreadChatCount > 0 && (
-                      <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
                     )}
                   </Button>
                 </Link>
@@ -670,24 +578,6 @@ export default function Dashboard() {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setCalendarSidebarOpen(true)}
-                  title="Today's Schedule"
-                  className="transition-all hover:scale-110 hover:shadow-lg"
-                >
-                  <Calendar className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setMeetingSidebarOpen(true)}
-                  title="Quick Meeting"
-                  className="transition-all hover:scale-110 hover:shadow-lg"
-                >
-                  <Users className="h-4 w-4" />
-                </Button>
                 <Button
                   variant="outline"
                   size="icon"
@@ -984,7 +874,7 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          {/* Current Projects & Today's Schedule - Side by Side */}
+          {/* Current Projects */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             <Card className="p-4">
               <div className="flex items-center justify-between mb-3">
@@ -1029,21 +919,6 @@ export default function Dashboard() {
               )}
             </Card>
 
-            {/* Today's Schedule */}
-            <Card className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-base font-semibold">Today's Schedule</h3>
-                <Button variant="ghost" size="sm" asChild className="text-xs">
-                  <Link href="/calendar">
-                    <Calendar className="h-3.5 w-3.5 mr-1" />
-                    View All
-                  </Link>
-                </Button>
-              </div>
-              <div className="max-h-64 overflow-y-auto">
-                <TodayCalendarWidgetContent />
-              </div>
-            </Card>
           </div>
 
 
@@ -1402,7 +1277,7 @@ export default function Dashboard() {
         </DialogContent>
       </Dialog>
 
-      {/* Global Chat Widget */}
+      {/* Quick Actions */}
       <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
         <Button
           onClick={() => {
@@ -1418,19 +1293,6 @@ export default function Dashboard() {
           <StickyNote className="h-5 w-5" />
         </Button>
         <Button
-          onClick={() => {
-            setChatOpen(true);
-            setFabOpen(false);
-          }}
-          className={`h-12 w-12 rounded-full shadow-premium-lg bg-[#ff2801] hover:bg-[#e62401] text-white transition-all ${
-            fabOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6 pointer-events-none"
-          }`}
-          size="icon"
-          title="Chat"
-        >
-          <MessageSquare className="h-5 w-5" />
-        </Button>
-        <Button
           onClick={() => setFabOpen(!fabOpen)}
           className="h-14 w-14 rounded-full shadow-premium-lg bg-primary hover:bg-primary/90 text-white"
           size="icon"
@@ -1441,24 +1303,11 @@ export default function Dashboard() {
       </div>
 
       <NotesWidget open={notesOpen} onOpenChange={setNotesOpen} hideTrigger />
-      <GlobalChatWidget open={chatOpen} onOpenChange={setChatOpen} hideTrigger />
 
       {/* Notification Sidebar */}
       <NotificationSidebar 
         isOpen={notificationSidebarOpen} 
         onClose={() => setNotificationSidebarOpen(false)} 
-      />
-
-      {/* Calendar Sidebar */}
-      <CalendarSidebar 
-        isOpen={calendarSidebarOpen} 
-        onClose={() => setCalendarSidebarOpen(false)} 
-      />
-
-      {/* Quick Meeting Sidebar */}
-      <QuickMeetingSidebar 
-        isOpen={meetingSidebarOpen} 
-        onClose={() => setMeetingSidebarOpen(false)} 
       />
 
       {/* Break Overlay */}
