@@ -32,6 +32,10 @@ export default function Account() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const apiBaseUrl = import.meta.env.VITE_API_URL?.trim();
+  const avatarUploadEndpoint = apiBaseUrl
+    ? `${apiBaseUrl.replace(/\/+$/, "")}/api/upload-avatar`
+    : "/api/upload-avatar";
   
   const updateAvatarMutation = trpc.auth.updateAvatar.useMutation({
     onSuccess: () => {
@@ -217,9 +221,10 @@ export default function Account() {
                       const formData = new FormData();
                       formData.append("file", file);
 
-                      const response = await fetch("/api/upload-avatar", {
+                      const response = await fetch(avatarUploadEndpoint, {
                         method: "POST",
                         body: formData,
+                        credentials: "include",
                       });
 
                       if (!response.ok) throw new Error("Upload failed");

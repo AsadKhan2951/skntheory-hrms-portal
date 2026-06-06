@@ -202,7 +202,7 @@ export default function Dashboard() {
         <div className="p-4 border-b flex items-center justify-between">
           {!sidebarCollapsed && (
             <div className="text-sm font-semibold tracking-normal text-foreground">
-              Flow | Movement
+              Flow | skntheory
             </div>
           )}
           <Button
@@ -284,7 +284,7 @@ export default function Dashboard() {
             {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
           <div className="text-sm font-semibold tracking-normal text-foreground">
-            Flow | Movement
+            Flow | skntheory
           </div>
           <Button
             variant="ghost"

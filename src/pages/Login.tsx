@@ -83,7 +83,7 @@ export default function Login() {
           <div className="flex justify-center mb-4">
             <div className="text-center">
               <div className="text-2xl font-semibold tracking-normal text-foreground">
-                Flow | Movement
+                Flow | skntheory
               </div>
               <div className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">
                 HRMS Portal
