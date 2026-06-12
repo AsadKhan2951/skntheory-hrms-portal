@@ -7,16 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -707,28 +697,28 @@ export function TimeInOutDialog({ open, onOpenChange }: TimeInOutDialogProps) {
       </Dialog>
 
       {/* Task Alert Dialog */}
-      <AlertDialog open={showTaskAlert} onOpenChange={setShowTaskAlert}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2">
+      <Dialog open={showTaskAlert} onOpenChange={setShowTaskAlert}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 pr-8">
               <AlertTriangle className="h-5 w-5 text-yellow-500" />
               No Tasks Added
-            </AlertDialogTitle>
-            <AlertDialogDescription>
+            </DialogTitle>
+            <DialogDescription>
               You haven't added any tasks for today. It's important to log your work activities before clocking out.
               Would you like to go to the Projects page to add tasks, or clock out anyway?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleForceClockOut}>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleForceClockOut}>
               Clock Out Anyway
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={handleGoToProjects}>
+            </Button>
+            <Button onClick={handleGoToProjects}>
               Go to Projects
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -37,14 +37,12 @@ import {
   List,
   Plus,
   Timer,
-  StickyNote,
   LifeBuoy,
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { addHours, format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfDay, subDays } from "date-fns";
 import { toast } from "sonner";
 import { Link, useLocation } from "wouter";
-import { NotesWidget } from "@/components/NotesWidget";
 import { NotificationSidebar } from "@/components/NotificationSidebar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -65,8 +63,6 @@ export default function Dashboard() {
   const [breakReason, setBreakReason] = useState("");
   const [notificationSidebarOpen, setNotificationSidebarOpen] = useState(false);
   const [attendanceView, setAttendanceView] = useState<'graph' | 'list'>('graph');
-  const [fabOpen, setFabOpen] = useState(false);
-  const [notesOpen, setNotesOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackSubject, setFeedbackSubject] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
@@ -526,25 +522,14 @@ export default function Dashboard() {
           <div className="text-sm font-semibold tracking-normal text-foreground">
             Flow | skntheory
           </div>
-          <div className="flex items-center gap-1">
-            <Link href="/notifications">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative"
-              >
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
-              </Button>
-            </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-            >
-              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-          </div>
+          <Button
+            size="sm"
+            onClick={() => setTimeDialogOpen(true)}
+            className="h-9 shrink-0 px-3 text-xs"
+          >
+            <Clock className="mr-1.5 h-4 w-4" />
+            {activeEntry ? "Clock Out" : "Clock In"}
+          </Button>
         </div>
 
         <div className="p-4 md:p-6 lg:p-8">
@@ -1276,33 +1261,6 @@ export default function Dashboard() {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Quick Actions */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
-        <Button
-          onClick={() => {
-            setNotesOpen(true);
-            setFabOpen(false);
-          }}
-          className={`h-12 w-12 rounded-full shadow-premium-lg bg-[#ff8a00] hover:bg-[#ff7a00] text-white transition-all ${
-            fabOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6 pointer-events-none"
-          }`}
-          size="icon"
-          title="Notes"
-        >
-          <StickyNote className="h-5 w-5" />
-        </Button>
-        <Button
-          onClick={() => setFabOpen(!fabOpen)}
-          className="h-14 w-14 rounded-full shadow-premium-lg bg-primary hover:bg-primary/90 text-white"
-          size="icon"
-          title="Quick Actions"
-        >
-          {fabOpen ? <X className="h-6 w-6" /> : <Plus className="h-6 w-6" />}
-        </Button>
-      </div>
-
-      <NotesWidget open={notesOpen} onOpenChange={setNotesOpen} hideTrigger />
 
       {/* Notification Sidebar */}
       <NotificationSidebar 
