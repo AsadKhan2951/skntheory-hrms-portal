@@ -17,12 +17,8 @@ export default function Login() {
   const [twoFactorQr, setTwoFactorQr] = useState<string | null>(null);
   const [twoFactorSecret, setTwoFactorSecret] = useState<string | null>(null);
   const [twoFactorCode, setTwoFactorCode] = useState("");
-  const meQuery = trpc.auth.me.useQuery(undefined, { enabled: false, retry: false });
-
-  const redirectByRole = async () => {
-    const result = await meQuery.refetch();
-    const role = (result.data as any)?.role;
-    window.location.href = role === "admin" ? "/admin" : "/dashboard";
+  const redirectByRole = (role?: string) => {
+    window.location.assign(role === "admin" ? "/admin" : "/dashboard");
   };
 
   const loginMutation = trpc.auth.customLogin.useMutation({
@@ -37,7 +33,7 @@ export default function Login() {
         return;
       }
       toast.success("Login successful!");
-      await redirectByRole();
+      redirectByRole(data?.user?.role);
     },
     onError: (error) => {
       toast.error(error.message || "Login failed");
@@ -45,9 +41,9 @@ export default function Login() {
   });
 
   const verifyMutation = trpc.auth.verifyTwoFactor.useMutation({
-    onSuccess: async () => {
+    onSuccess: async (data: any) => {
       toast.success("Verification successful!");
-      await redirectByRole();
+      redirectByRole(data?.user?.role);
     },
     onError: (error) => {
       toast.error(error.message || "Verification failed");
@@ -82,6 +78,11 @@ export default function Login() {
         <CardHeader className="space-y-1">
           <div className="flex justify-center mb-4">
             <div className="text-center">
+              <img
+                src="/radflow-logo-white.png"
+                alt="Flow"
+                className="mx-auto mb-3 h-12 w-auto object-contain"
+              />
               <div className="text-2xl font-semibold tracking-normal text-foreground">
                 Flow | skntheory
               </div>

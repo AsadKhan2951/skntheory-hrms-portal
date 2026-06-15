@@ -635,7 +635,10 @@ export default function Dashboard() {
                 </Button>
                 {activeEntry ? (
                   <>
-                    <Button onClick={() => setTimeDialogOpen(true)}>
+                    <Button
+                      onClick={() => setTimeDialogOpen(true)}
+                      className="hidden lg:inline-flex"
+                    >
                       <Clock className="h-4 w-4 mr-2" />
                       Clock Out
                     </Button>
@@ -648,7 +651,10 @@ export default function Dashboard() {
                     </Button>
                   </>
                 ) : (
-                  <Button onClick={() => setTimeDialogOpen(true)}>
+                  <Button
+                    onClick={() => setTimeDialogOpen(true)}
+                    className="hidden lg:inline-flex"
+                  >
                     <Clock className="h-4 w-4 mr-2" />
                     Clock In
                   </Button>
