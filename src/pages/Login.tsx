@@ -7,6 +7,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { clearStoredSessionToken, storeSessionToken } from "@/const";
 
 export default function Login() {
   const [employeeId, setEmployeeId] = useState("");
@@ -32,6 +33,7 @@ export default function Login() {
         toast.message("Enter your verification code");
         return;
       }
+      storeSessionToken(data?.sessionToken);
       toast.success("Login successful!");
       redirectByRole(data?.user?.role);
     },
@@ -42,6 +44,7 @@ export default function Login() {
 
   const verifyMutation = trpc.auth.verifyTwoFactor.useMutation({
     onSuccess: async (data: any) => {
+      storeSessionToken(data?.sessionToken);
       toast.success("Verification successful!");
       redirectByRole(data?.user?.role);
     },
@@ -64,6 +67,7 @@ export default function Login() {
   };
 
   const resetToLogin = () => {
+    clearStoredSessionToken();
     setTwoFactorRequired(false);
     setTwoFactorToken("");
     setTwoFactorSetup(false);

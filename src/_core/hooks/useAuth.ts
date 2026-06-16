@@ -1,4 +1,4 @@
-import { getLoginUrl } from "@/const";
+import { clearStoredSessionToken, getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { TRPCClientError } from "@trpc/client";
 import { useCallback, useEffect, useMemo } from "react";
@@ -20,6 +20,7 @@ export function useAuth(options?: UseAuthOptions) {
 
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => {
+      clearStoredSessionToken();
       utils.auth.me.setData(undefined, null);
     },
   });
@@ -27,6 +28,7 @@ export function useAuth(options?: UseAuthOptions) {
   const logout = useCallback(async () => {
     try {
       await logoutMutation.mutateAsync();
+      clearStoredSessionToken();
       utils.auth.me.setData(undefined, null);
       await utils.auth.me.invalidate();
       return;
@@ -35,6 +37,7 @@ export function useAuth(options?: UseAuthOptions) {
         error instanceof TRPCClientError &&
         error.data?.code === "UNAUTHORIZED"
       ) {
+        clearStoredSessionToken();
         utils.auth.me.setData(undefined, null);
         await utils.auth.me.invalidate();
         return;
@@ -65,6 +68,7 @@ export function useAuth(options?: UseAuthOptions) {
     if (typeof window === "undefined") return;
     if (window.location.pathname === redirectPath) return;
 
+    clearStoredSessionToken();
     window.location.href = redirectPath
   }, [
     redirectOnUnauthenticated,
