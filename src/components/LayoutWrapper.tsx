@@ -52,7 +52,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   };
 
   const menuItems = [
-    { icon: Home, label: "Flow | skntheory", path: "/dashboard" },
+    { icon: Home, label: "Now | skntheory", path: "/dashboard" },
     { icon: Clock, label: "Attendance", path: "/attendance" },
     { icon: ClipboardList, label: "Leave Management", path: "/leave" },
     { icon: FolderKanban, label: "Projects", path: "/projects" },
@@ -96,7 +96,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         <div className="p-4 border-b flex items-center justify-between">
           {!sidebarCollapsed && (
             <div className="text-sm font-semibold tracking-normal text-foreground">
-              Flow | skntheory
+              Now | skntheory
             </div>
           )}
           <Button
@@ -184,7 +184,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
             {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
           <div className="text-sm font-semibold tracking-normal text-foreground">
-            Flow | skntheory
+            Now | skntheory
           </div>
           <Button
             variant="ghost"

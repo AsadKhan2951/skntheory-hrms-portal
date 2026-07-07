@@ -1,7 +1,7 @@
 {
-  "name": "Flow | skntheory HRMS Portal",
-  "short_name": "Flow",
-  "description": "Flow skntheory HRMS Portal",
+  "name": "Now | skntheory HRMS Portal",
+  "short_name": "Now",
+  "description": "Now skntheory HRMS Portal",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

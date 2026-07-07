@@ -114,7 +114,7 @@ function DashboardLayoutContent({
 
   // Generate menu items based on user role
   const menuItems = [
-    { icon: Home, label: "Flow | skntheory", path: "/dashboard" },
+    { icon: Home, label: "Now | skntheory", path: "/dashboard" },
     { icon: Clock, label: "Attendance", path: "/attendance" },
     { icon: ClipboardList, label: "Leave Management", path: "/leave" },
     { icon: FolderKanban, label: "Projects", path: "/projects" },
@@ -192,7 +192,7 @@ function DashboardLayoutContent({
               {!isCollapsed ? (
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="text-sm font-semibold tracking-normal text-foreground">
-                    Flow | skntheory
+                    Now | skntheory
                   </div>
                 </div>
               ) : null}
