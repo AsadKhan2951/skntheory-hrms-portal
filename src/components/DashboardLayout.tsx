@@ -126,6 +126,13 @@ function DashboardLayoutContent({
   ];
 
   const activeMenuItem = menuItems.find(item => item.path === location);
+  const brandLogo = (
+    <img
+      src="/new-logo-v2.png"
+      alt="Now"
+      className="h-6 w-auto object-contain"
+    />
+  );
 
   useEffect(() => {
     if (isCollapsed) {
@@ -190,11 +197,7 @@ function DashboardLayoutContent({
                 <PanelLeft className="h-4 w-4 text-muted-foreground" />
               </button>
               {!isCollapsed ? (
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="text-sm font-semibold tracking-normal text-foreground">
-                    Now | skntheory
-                  </div>
-                </div>
+                <div className="flex items-center gap-2 min-w-0">{brandLogo}</div>
               ) : null}
             </div>
           </SidebarHeader>

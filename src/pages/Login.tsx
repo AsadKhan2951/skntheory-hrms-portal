@@ -88,7 +88,7 @@ export default function Login() {
                 className="mx-auto mb-3 h-7 w-auto object-contain"
               />
               <div className="text-2xl font-semibold tracking-normal text-foreground">
-                Now | skntheory
+                skntheory
               </div>
               <div className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">
                 HRMS Portal

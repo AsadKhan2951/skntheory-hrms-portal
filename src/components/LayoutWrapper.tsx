@@ -68,6 +68,14 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const brandLogo = (
+    <img
+      src="/new-logo-v2.png"
+      alt="Now"
+      className="h-6 w-auto object-contain"
+    />
+  );
+
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       {/* Mobile Sidebar Overlay */}
@@ -95,9 +103,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
         {/* Logo & Toggle */}
         <div className="p-4 border-b flex items-center justify-between">
           {!sidebarCollapsed && (
-            <div className="text-sm font-semibold tracking-normal text-foreground">
-              Now | skntheory
-            </div>
+            brandLogo
           )}
           <Button
             variant="ghost"
@@ -183,9 +189,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
           >
             {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
-          <div className="text-sm font-semibold tracking-normal text-foreground">
-            Now | skntheory
-          </div>
+          {brandLogo}
           <Button
             variant="ghost"
             size="icon"

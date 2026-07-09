@@ -414,6 +414,14 @@ export default function Dashboard() {
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const brandLogo = (
+    <img
+      src="/new-logo-v2.png"
+      alt="Now"
+      className="h-6 w-auto object-contain"
+    />
+  );
+
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       {/* Mobile Sidebar Overlay */}
@@ -441,9 +449,7 @@ export default function Dashboard() {
         {/* Logo & Toggle */}
         <div className="p-4 border-b flex items-center justify-between">
           {!sidebarCollapsed && (
-            <div className="text-sm font-semibold tracking-normal text-foreground">
-              Now | skntheory
-            </div>
+            brandLogo
           )}
           <Button
             variant="ghost"
@@ -519,9 +525,7 @@ export default function Dashboard() {
           >
             {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
-          <div className="text-sm font-semibold tracking-normal text-foreground">
-            Flow | skntheory
-          </div>
+          {brandLogo}
           <Button
             size="sm"
             onClick={() => setTimeDialogOpen(true)}
